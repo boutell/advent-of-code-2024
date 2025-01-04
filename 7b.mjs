@@ -20,11 +20,12 @@ function solvable(result, current, values) {
   const rest = values.slice(1);
   const sum = current + value;
   const product = current * value;
+  const concat = parseInt(`${current}${value}`);
   if (rest.length === 0) {
-    return (sum === result) || (product === result);
+    return (sum === result) || (product === result) || (concat === result);
   }
-  if ((sum > result) && (product > result)) {
+  if ((sum > result) && (product > result) && (concat > result)) {
     return false;
   }
-  return solvable(result, sum, rest) || solvable(result, product, rest);
+  return solvable(result, sum, rest) || solvable(result, product, rest) || solvable(result, concat, rest);
 }
