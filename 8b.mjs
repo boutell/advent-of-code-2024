@@ -26,24 +26,35 @@ const seen = new Set();
 for (const [ value, cells ] of freqs.entries()) {
   for (let i = 0; (i < cells.length); i++) {
     for (let j = i + 1; (j < cells.length); j++) {
-      const x1 = cells[i].x - (cells[j].x - cells[i].x);
-      const y1 = cells[i].y - (cells[j].y - cells[i].y);
-      const x2 = (cells[j].x - cells[i].x) + cells[j].x;
-      const y2 = (cells[j].y - cells[i].y) + cells[j].y;
-      addIfInBounds(x1, y1);
-      addIfInBounds(x2, y2);
+      const diffx = cells[j].x - cells[i].x;
+      const diffy = cells[j].y - cells[i].y;
+      let dx, dy;
+      for (let d = 1; (d <= Math.max(diffx, diffy)); d++) {
+        const cdx = diffx / d;
+        const cdy = diffy / d;
+        if ((Math.floor(cdx) === cdx) && (Math.floor(cdy) === cdy)) {
+          dx = cdx;
+          dy = cdy;
+        } else {
+          break;
+        }
+      }
+      probe(cells[i].x, cells[i].y, dx, dy);
+      probe(cells[i].x, cells[i].y, -dx, -dy);
     }
   }
 }
 
 log(antinodes);
 
-function addIfInBounds(x, y) {
-  if (grid.inBounds(x, y)) {
+function probe(x, y, dx, dy) {
+  while (grid.inBounds(x, y)) {
     const k = key(x, y);
     if (!seen.has(k)) {
       antinodes++;
       seen.add(k);
     }
+    x += dx;
+    y += dy;
   }
 }
